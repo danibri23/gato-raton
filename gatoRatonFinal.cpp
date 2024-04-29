@@ -7,8 +7,8 @@ int dataObtenido;
 
 enum Casilla {
     VACIA,
-    GATO,
-    RATON,
+    PERSONA,
+    IA,
 };
 
 vector<Casilla> tablero(9, VACIA);
@@ -18,7 +18,7 @@ void generarTablero() {
     for (int i = 0; i < 9; ++i) {
         if (i % 3 == 0 && i != 0)
             cout << "\n---------\n";
-        cout << (tablero[i] == VACIA ? " " : tablero[i] == GATO ? "X" : "O");
+        cout << (tablero[i] == VACIA ? " " : tablero[i] == PERSONA ? "X" : "O");
         if (i % 3 != 2)
             cout << " | ";
     }
@@ -51,7 +51,7 @@ Movimiento minimax(vector<Casilla> nuevoTablero, Casilla jugador) {
 
     // Comprobar los estados terminales como ganar, perder y empate y devolver un valor en consecuencia
     if (tablaGanadora(nuevoTablero, jugador)) {
-        if (jugador == RATON) {
+        if (jugador == IA) {
             return { -1, -10 };
         } else {
             return { -1, 10 };
@@ -73,12 +73,10 @@ Movimiento minimax(vector<Casilla> nuevoTablero, Casilla jugador) {
         nuevoTablero[availSpots[i]] = jugador;
 
         // Recopilar la puntuación resultante de llamar a minimax en el oponente del jugador actual
-        if (jugador == GATO) {
-            movimiento.puntuacion = minimax(nuevoTablero, RATON).puntuacion;
-            cout << "La IA (GATO) está evaluando su próximo movimiento..." << endl;
+        if (jugador == PERSONA) {
+            movimiento.puntuacion = minimax(nuevoTablero, IA).puntuacion;
         } else {
-            movimiento.puntuacion = minimax(nuevoTablero, GATO).puntuacion;
-            cout << "El jugador RATÓN está evaluando su próximo movimiento..." << endl;
+            movimiento.puntuacion = minimax(nuevoTablero, PERSONA).puntuacion;
         }
 
         // Restablecer el espacio a vacío
@@ -89,7 +87,7 @@ Movimiento minimax(vector<Casilla> nuevoTablero, Casilla jugador) {
     }
 
     // Si es el turno de la computadora, elegir el movimiento con la puntuación más alta
-    if (jugador == GATO) {
+    if (jugador == PERSONA) {
         int mejorPuntuacion = -10000;
         int mejorMovimientoIndice = -1;
         for (int i = 0; i < movimientos.size(); ++i) {
@@ -141,7 +139,7 @@ vector<int> emptyIndexies(const vector<Casilla>& tablero) {
 
 
 int main() {
-    cout << "Bienvenido al juego del gato (Tom 🐈) y el ratón (Jerry 🐁)" << endl;
+    cout << "Bienvenido al juego del PERSONA (Tom 🐈) y el ratón (Jerry 🐁)" << endl;
 
     cout << "Introduce uno (1) para comenzar: "; 
     cin >> dataObtenido;
@@ -165,15 +163,15 @@ int main() {
             }
 
             // Actualizar el tablero con la marca "X" en las coordenadas especificadas
-            tablero[indice] = GATO;
-            cout << "¡El jugador GATO ha realizado su movimiento!" << endl;
+            tablero[indice] = PERSONA;
+            cout << "¡El jugador PERSONA ha realizado su movimiento!" << endl;
 
             // Generar y mostrar el tablero actualizado
             generarTablero();
 
             // Verificar si hay un ganador
-            if (tablaGanadora(tablero, GATO)) {
-                cout << "¡El jugador GATO ha ganado!" << endl;
+            if (tablaGanadora(tablero, PERSONA)) {
+                cout << "¡El jugador PERSONA ha ganado!" << endl;
                 juegoActivo = false;
             }
 
@@ -192,14 +190,14 @@ int main() {
 
             // Si el juego no ha terminado, es el turno de la IA
             if (juegoActivo) {
-                Movimiento movimientoIA = minimax(tablero, RATON);
-                tablero[movimientoIA.indice] = RATON;
-                cout << "¡La IA (RATÓN) ha realizado su movimiento!" << endl;
+                Movimiento movimientoIA = minimax(tablero, IA);
+                tablero[movimientoIA.indice] = IA;
+                cout << "¡La IA ha realizado su movimiento!" << endl;
                 generarTablero();
 
                 // Verificar si hay un ganador después del movimiento de la IA
-                if (tablaGanadora(tablero, RATON)) {
-                    cout << "¡La IA (RATÓN) ha ganado!" << endl;
+                if (tablaGanadora(tablero, IA)) {
+                    cout << "¡La IA ha ganado!" << endl;
                     juegoActivo = false;
                 }
 
